@@ -29,4 +29,6 @@ public class UserMessageForm {
     private Date createdDate;
 
     private Date updatedDate;
+
+    private String timeDifference;
 }

@@ -13,10 +13,13 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class MessageService {
@@ -114,7 +117,6 @@ public class MessageService {
             message.setBranchId(result.getUser().getBranchId());
             message.setDepartmentId(result.getUser().getDepartmentId());
             message.setCreatedDate(result.getCreatedDate());
-
             messages.add(message);
         }
         return messages;
@@ -145,6 +147,26 @@ public class MessageService {
             message.setDepartmentId(result.getUser().getDepartmentId());
             message.setCreatedDate(result.getCreatedDate());
 
+            Date nowDate = new Date();
+            long differenceInMillis = nowDate.getTime() - result.getCreatedDate().getTime();
+            long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(differenceInMillis);
+            long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(differenceInMillis);
+            long diffInHours = TimeUnit.MILLISECONDS.toHours(differenceInMillis);
+            long diffInDays = TimeUnit.MILLISECONDS.toDays(differenceInMillis);
+
+            if(diffInSeconds < 60) {
+                String timeDifference = diffInSeconds + "秒前";
+                message.setTimeDifference(timeDifference);
+            } else if(diffInMinutes < 60){
+                String timeDifference = diffInMinutes + "分前";
+                message.setTimeDifference(timeDifference);
+            } else if(diffInHours < 24){
+                String timeDifference = diffInHours + "時間前";
+                message.setTimeDifference(timeDifference);
+            } else {
+                String timeDifference = diffInDays + "日前";
+                message.setTimeDifference(timeDifference);
+            }
             messages.add(message);
         }
         return messages;
